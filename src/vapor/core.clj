@@ -2,16 +2,23 @@
   (:require [org.httpkit.server :refer (run-server)]
             [compojure.core :refer (defroutes context GET POST)]
             [compojure.handler :as handler]
+            [compojure.route :refer (resources not-found)]
+            [ring.middleware.json :as json]
             [ring.middleware.reload :as reload])
   (:gen-class))
 
 (def version "pre-alpha")
+(def data (atom [{:name "Alpha" :email "alpha@example.com" :city "NYC"}
+                 {:name "Beta" :email "beta@example.com" :city "Lisboa"}]))
 
 (defroutes api-routes
-  (GET "/" [] "Hello World!!!!!"))
+  (GET "/" [] "Hello World!!!!!")
+  (GET "/list" [] (str @data)))
 
 (defroutes app-routes
-  (context "/api" [] api-routes))
+  (context "/api" [] api-routes)
+  (resources "/")
+  (not-found "Page not found"))
 
 (defn version-middleware [handler]
   (fn [req]
