@@ -12,7 +12,10 @@
 
 (defroutes api-routes
   (GET "/" [] "Hello World!!!!!")
-  (GET "/list" [] (db/list-fruits)))
+  (GET "/list" []
+    {:status 200
+     :headers {"Content-Type" "application/clojure; charset=utf-8"}
+            :body (pr-str (db/list-fruits))}))
 
 (defroutes app-routes
   (context "/api" [] api-routes)
