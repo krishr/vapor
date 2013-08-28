@@ -9,6 +9,7 @@
                  [org.clojure/clojurescript "0.0-1859"]
                  [http-kit "2.1.10"]
                  [jayq "2.4.0"]
+                 [crate "0.2.4"]
                  [org.clojure/java.jdbc "0.3.0-alpha4"]
                  [org.apache.derby/derby "10.8.1.2"]]
   :plugins [[lein-cljsbuild "0.3.2"]]
