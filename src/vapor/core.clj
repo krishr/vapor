@@ -4,16 +4,15 @@
             [compojure.handler :as handler]
             [compojure.route :refer (resources not-found)]
             [ring.middleware.json :as json]
-            [ring.middleware.reload :as reload])
+            [ring.middleware.reload :as reload]
+            [vapor.db :as db])
   (:gen-class))
 
 (def version "pre-alpha")
-(def data (atom [{:name "Alpha" :email "alpha@example.com" :city "NYC"}
-                 {:name "Beta" :email "beta@example.com" :city "Lisboa"}]))
 
 (defroutes api-routes
   (GET "/" [] "Hello World!!!!!")
-  (GET "/list" [] (str @data)))
+  (GET "/list" [] (db/list-fruits)))
 
 (defroutes app-routes
   (context "/api" [] api-routes)

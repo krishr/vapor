@@ -22,6 +22,13 @@
      [:cost :int "DEFAULT 0"]
      :table-spec "")))
 
+(defn list-fruits []
+  (j/query ddb ["select * from fruits"]))
+
 (defn add-fruit [id name appearance grade cost]
   (j/with-connection ddb
     (j/insert-rows :fruits [id name appearance grade cost])))
+
+(defn remove-fruit [id]
+  (j/with-connection ddb
+    (j/do-prepared "delete from fruits where id=?" [id])))
