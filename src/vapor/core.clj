@@ -21,8 +21,8 @@
     (try
       (db/add-fruit id name appearance grade cost)
       (catch Exception ex
-        {:status 500 :message (.getMessage ex)}))
-    ))
+        {:status 500
+         :status-text (.getMessage ex)}))))
 
 (defroutes app-routes
   (context "/api" [] api-routes)
