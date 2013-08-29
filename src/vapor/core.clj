@@ -5,6 +5,7 @@
             [compojure.route :refer (resources not-found)]
             [ring.middleware.json :as json]
             [ring.middleware.reload :as reload]
+            [ring.middleware.params :as params]
             [vapor.db :as db])
   (:gen-class))
 
@@ -15,7 +16,13 @@
   (GET "/list" []
     {:status 200
      :headers {"Content-Type" "application/clojure; charset=utf-8"}
-            :body (pr-str (db/list-fruits))}))
+     :body (pr-str (db/list-fruits))})
+  (POST "/add" [id name appearance grade cost]
+    (try
+      (db/add-fruit id name appearance grade cost)
+      (catch Exception ex
+        {:status 500 :message (.getMessage ex)}))
+    ))
 
 (defroutes app-routes
   (context "/api" [] api-routes)
@@ -31,6 +38,7 @@
 (def app
   (-> (handler/api app-routes)
       (reload/wrap-reload '(vapor.core))
+      (params/wrap-params)
       (version-middleware)))
 
 (def server (atom nil))

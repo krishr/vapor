@@ -1,8 +1,9 @@
 (ns crud.core
   (:require [clojure.browser.repl :as repl]
             [jayq.core :refer (bind ajax css html append
-                                    hide show)]
-            [crate.core :as c]))
+                                    hide show val serialize)]
+            [crate.core :as c]
+            [ajax.core :refer (GET POST)]))
 
 (defn $ [id] (if (keyword? id)
                (js/jQuery (str "#" (name id)))
@@ -18,9 +19,17 @@
 (defn repl-connect []
   (repl/connect (str "http://" (get-hostname) ":9000/repl")))
 
+(defn show-form []
+  (hide ($ :crud))
+  (show ($ :form-view)))
+
 (defn render-table [data]
   (hide ($ :intro))
+  (hide ($ :form-view))
+  (show ($ :crud))
   (let [em ($ :listview)]
+    (html em "")
+    (append em "<h3>List View</h3>")
     (append em "<tr><th>Name</th><th>Appearance</th><th>Grade</th><th>Cost</th></tr>")
     (doseq [row data]
       (append em (str "<tr style='color:" (:appearance row)
@@ -37,11 +46,23 @@
            (log "list-fruits: " data)
            (render-table data))}))
 
+(defn save-new []
+  (POST "/api/add"
+      {:format :raw
+       :handler list-fruits
+       :params {:id (val ($ :inputId))
+                :name (val ($ :inputName))
+                :appearance (val ($ :inputAppearance))
+                :grade (val ($ :inputGrade))
+                :cost (val ($ :inputCost))}}))
+
 (defn initialize []
   (-> ($ :client-lang)
       (html "<b>ClojureScript</b>")
       (css {:color "blue"}))
   (bind ($ :start) :click list-fruits)
+  (bind ($ :create-new) :click show-form)
+  (bind ($ :save) :click save-new)
   (log "Initialized."))
 
 (set! (.-onload js/window) initialize)
